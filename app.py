@@ -88,7 +88,7 @@ st.markdown("<hr style='border-top: 2px solid #B91C1C; margin-top: 10px; margin-
 
 # --- LOCAL CONVOCATION BANNER IMAGE ---
 st.image(
-    "banner.jpg", 
+    "banner.jpeg", 
     caption="5th Convocation Ceremony | Central University of South Bihar, Gaya (12 October 2026)", 
     use_container_width=True
 )
