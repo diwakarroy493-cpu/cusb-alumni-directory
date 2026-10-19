@@ -86,10 +86,10 @@ with col_badges:
 
 st.markdown("<hr style='border-top: 2px solid #B91C1C; margin-top: 10px; margin-bottom: 15px;'>", unsafe_allow_html=True)
 
-# --- CAMPUS BANNER IMAGE ---
+# --- LOCAL CONVOCATION BANNER IMAGE ---
 st.image(
-    "https://images.unsplash.com/photo-1541829070764-84a7d30dd3f3?auto=format&fit=crop&w=1200&q=80", 
-    caption="Central University of South Bihar | Panchanpur, Gaya", 
+    "banner.jpg", 
+    caption="5th Convocation Ceremony | Central University of South Bihar, Gaya (12 October 2026)", 
     use_container_width=True
 )
 
@@ -305,4 +305,3 @@ with tab4:
         st.error("Incorrect passkey. Please check and try again.")
     else:
         st.info("Enter the passkey to manage pending profiles.")
-        
