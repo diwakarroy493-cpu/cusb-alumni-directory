@@ -276,10 +276,12 @@ with tab3:
 # TAB 4: ADMIN MODERATION PANEL
 with tab4:
     st.header("🛡️ Departmental Admin Moderation Panel")
-    admin_password = st.text_input("Enter Admin Passkey", type="password")
+        admin_password = st.text_input("Enter Admin Passkey", type="password")
     
-    if admin_password == "cusb2026":
+    # Read password safely from Streamlit secrets
+    if admin_password == st.secrets["ADMIN_PASSWORD"]:
         st.success("Admin access granted.")
+
         pending_df = fetch_alumni(status='Pending')
         st.subheader(f"Pending Approvals ({len(pending_df)})")
         
