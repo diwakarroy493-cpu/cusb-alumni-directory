@@ -5,44 +5,100 @@ import base64
 
 # Page Configuration
 st.set_page_config(
-    page_title="CUSB CS Alumni Network",
+    page_title="Central University of South Bihar | CS Alumni Directory",
     page_icon="🎓",
     layout="wide"
 )
 
-# Custom Styling & CSS
+# Custom Header & Navigation Bar Styling
 st.markdown("""
 <style>
-    .header-container {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 15px;
-        margin-bottom: 10px;
-    }
-    .main-title {
-        font-size: 2.2rem;
-        font-weight: 700;
-        color: #1E3A8A;
-        text-align: center;
-        margin-bottom: 0px;
-    }
-    .sub-title {
-        font-size: 1.1rem;
-        color: #4B5563;
-        text-align: center;
+    /* Top Bar Styling */
+    .top-bar {
+        background-color: #0056B3;
+        color: white;
+        padding: 6px 15px;
+        font-size: 0.85rem;
+        font-weight: 500;
+        margin-top: -60px;
+        margin-left: -5rem;
+        margin-right: -5rem;
         margin-bottom: 15px;
     }
-    .badge-tag {
-        background-color: #E0E7FF;
-        color: #3730A3;
-        padding: 4px 12px;
-        border-radius: 12px;
+    .top-bar a {
+        color: white;
+        text-decoration: none;
+        margin-right: 15px;
+    }
+    
+    /* Branding Header Layout */
+    .header-box {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 0;
+        border-bottom: 2px solid #B91C1C;
+        margin-bottom: 15px;
+    }
+    
+    .brand-title {
+        color: #0F172A;
+        font-family: 'Georgia', serif;
+        font-size: 1.8rem;
+        font-weight: 800;
+        line-height: 1.2;
+    }
+    .brand-sub {
+        color: #1E3A8A;
+        font-size: 1.4rem;
+        font-weight: 700;
+    }
+    .brand-tagline {
+        color: #475569;
+        font-size: 0.8rem;
         font-weight: 600;
-        font-size: 0.85rem;
     }
 </style>
+
+<!-- Top Links Bar -->
+<div class="top-bar">
+    <a href="#">[ RTI ]</a> | 
+    <a href="#">[ Public Self Disclosure ]</a> | 
+    <a href="#">✉ Webmail</a>
+</div>
 """, unsafe_allow_html=True)
+
+# --- BRANDING HEADER WITH LOGOS ---
+col_main_logo, col_badges = st.columns([2.5, 1.5])
+
+with col_main_logo:
+    c_logo, c_text = st.columns([1, 4])
+    with c_logo:
+        st.image("https://upload.wikimedia.org/wikipedia/en/2/22/Central_University_of_South_Bihar_logo.png", width=105)
+    with c_text:
+        st.markdown('<div class="brand-title">दक्षिण बिहार केन्द्रीय विश्वविद्यालय</div>', unsafe_allow_html=True)
+        st.markdown('<div class="brand-sub">Central University of South Bihar</div>', unsafe_allow_html=True)
+        st.markdown('<div class="brand-tagline">(Established under the Central Universities Act, 2009) UGC Category I University</div>', unsafe_allow_html=True)
+
+with col_badges:
+    b1, b2 = st.columns(2)
+    with b1:
+        # NAAC A++ Badge Graphic
+        st.image("https://upload.wikimedia.org/wikipedia/commons/f/fa/NAAC_A%2B%2B_Grade.png", width=75)
+    with b2:
+        st.markdown("**5th Convocation**")
+        st.caption("NAAC Accredited A++")
+
+st.markdown("<hr style='border-top: 2px solid #B91C1C; margin-top: 5px; margin-bottom: 15px;'>", unsafe_allow_html=True)
+
+# --- CONVOCATION BANNER IMAGE ---
+st.image(
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Central_University_of_South_Bihar_Gaya_campus.jpg/1200px-Central_University_of_South_Bihar_Gaya_campus.jpg", 
+    caption="5th Convocation Ceremony | Central University of South Bihar, Gaya", 
+    use_container_width=True
+)
+
+st.markdown("---")
 
 # --- DATABASE SETUP ---
 DB_NAME = "cusb_alumni.db"
@@ -66,19 +122,21 @@ def init_db():
             status TEXT DEFAULT 'Pending'
         )
     ''')
+    try:
+        c.execute("ALTER TABLE alumni ADD COLUMN photo_data TEXT")
+    except sqlite3.OperationalError:
+        pass
     conn.commit()
     conn.close()
 
 init_db()
 
-# Helper: Convert Uploaded File to Base64 String
 def image_to_base64(uploaded_file):
     if uploaded_file is not None:
         bytes_data = uploaded_file.getvalue()
         return base64.b64encode(bytes_data).decode()
     return None
 
-# --- DATABASE HELPER FUNCTIONS ---
 def add_alumnus(name, degree, year, company, role, domain, email, linkedin, mentorship, photo_data):
     conn = sqlite3.connect(DB_NAME)
     c = conn.cursor()
@@ -109,26 +167,7 @@ def delete_alumnus(alumni_id):
     conn.commit()
     conn.close()
 
-# --- BRANDING & HEADER SECTION ---
-col_logo, col_heading = st.columns([1, 4])
-
-with col_logo:
-    # CUSB Logo
-    st.image("https://upload.wikimedia.org/wikipedia/en/2/22/Central_University_of_South_Bihar_logo.png", width=120)
-
-with col_heading:
-    st.markdown('<div class="main-title">Central University of South Bihar</div>', unsafe_allow_html=True)
-    st.markdown('<div class="sub-title">Department of Computer Science | Alumni Network & Placement Directory</div>', unsafe_allow_html=True)
-    st.markdown('<span class="badge-tag">NAAC Accredited A++</span> <span class="badge-tag">Gaya, Bihar</span>', unsafe_allow_html=True)
-
-st.markdown("<br>", unsafe_allow_html=True)
-
-# Campus Banner Graphic
-st.image("https://images.unsplash.com/photo-1541829070764-84a7d30dd3f3?auto=format&fit=crop&w=1200&q=80", caption="CUSB Campus View | Panchanpur, Gaya", use_container_width=True)
-
-st.markdown("---")
-
-# Navigation Tabs
+# --- NAVIGATION TABS ---
 tab1, tab2, tab3, tab4 = st.tabs([
     "🔍 Search Directory", 
     "📝 Register Profile", 
@@ -136,15 +175,13 @@ tab1, tab2, tab3, tab4 = st.tabs([
     "🛡️ Admin Moderation"
 ])
 
-# --- TAB 1: SEARCH DIRECTORY ---
+# TAB 1: SEARCH DIRECTORY
 with tab1:
     st.header("Find & Connect with Alumni")
-    
     df = fetch_alumni(status='Approved')
     
     if not df.empty:
         col1, col2, col3 = st.columns(3)
-        
         with col1:
             search_company = st.text_input("Filter by Company / Organization")
         with col2:
@@ -153,7 +190,6 @@ with tab1:
             search_mentorship = st.selectbox("Open for Mentorship?", ["All", "Yes", "No"])
             
         filtered_df = df.copy()
-        
         if search_company:
             filtered_df = filtered_df[filtered_df['company'].str.contains(search_company, case=False, na=False)]
         if search_domain != "All":
@@ -162,17 +198,14 @@ with tab1:
             filtered_df = filtered_df[filtered_df['open_for_mentorship'] == search_mentorship]
             
         st.write(f"**Showing {len(filtered_df)} verified alumni profile(s):**")
-        
         for idx, row in filtered_df.iterrows():
             with st.expander(f"📌 **{row['name']}** — {row['role']} at **{row['company']}** ({row['passout_year']})"):
                 c_img, c_details = st.columns([1, 3])
-                
                 with c_img:
                     if row.get('photo_data') and pd.notna(row['photo_data']):
                         st.image(f"data:image/png;base64,{row['photo_data']}", width=120)
                     else:
                         st.image("https://cdn-icons-png.flaticon.com/512/3135/3135715.png", width=100)
-                        
                 with c_details:
                     st.write(f"🎓 **Degree:** {row['degree']}")
                     st.write(f"🏢 **Company:** {row['company']} | **Role:** {row['role']}")
@@ -182,16 +215,13 @@ with tab1:
                         st.write(f"🔗 **LinkedIn:** [View Profile]({row['linkedin']})")
                     st.write(f"🤝 **Open for Mentorship/Referrals:** **{row['open_for_mentorship']}**")
     else:
-        st.info("No approved alumni profiles available yet. Register a profile or use the Admin tab to approve entries.")
+        st.info("No approved alumni profiles available yet.")
 
-# --- TAB 2: REGISTER PROFILE ---
+# TAB 2: REGISTER PROFILE
 with tab2:
     st.header("Alumni Self-Registration Portal")
-    st.markdown("Graduated from CUSB Computer Science? Register your details and upload your photo below to join the official network.")
-    
     with st.form("alumni_reg_form", clear_on_submit=True):
         col_a, col_b = st.columns(2)
-        
         with col_a:
             name = st.text_input("Full Name *")
             degree = st.selectbox("Degree Completed *", [
@@ -217,12 +247,7 @@ with tab2:
             email = st.text_input("Contact Email *")
             linkedin = st.text_input("LinkedIn Profile URL (Optional)")
             
-        mentorship = st.radio(
-            "Are you open to guiding current CUSB students for referrals/mentorship?", 
-            ["Yes", "No"], 
-            horizontal=True
-        )
-        
+        mentorship = st.radio("Are you open to guiding current CUSB students for referrals/mentorship?", ["Yes", "No"], horizontal=True)
         submit_btn = st.form_submit_button("Submit Registration")
         
         if submit_btn:
@@ -233,39 +258,28 @@ with tab2:
             else:
                 st.error("Please fill in all mandatory fields marked with *.")
 
-# --- TAB 3: PLACEMENT ANALYTICS ---
+# TAB 3: PLACEMENT ANALYTICS
 with tab3:
     st.header("Placement & Industry Insights Dashboard")
     df = fetch_alumni(status='Approved')
-    
     if not df.empty:
         col_m1, col_m2 = st.columns(2)
-        
         with col_m1:
             st.subheader("Top Hiring Domains")
-            domain_counts = df['domain'].value_counts()
-            st.bar_chart(domain_counts)
-            
+            st.bar_chart(df['domain'].value_counts())
         with col_m2:
             st.subheader("Graduation Year Distribution")
-            year_counts = df['passout_year'].value_counts()
-            st.line_chart(year_counts)
-            
-        st.subheader("Top Hiring Companies")
-        company_counts = df['company'].value_counts().head(5)
-        st.dataframe(company_counts, use_container_width=True)
+            st.line_chart(df['passout_year'].value_counts())
     else:
-        st.info("Analytics charts will display once approved alumni data is available.")
+        st.info("Analytics will display once approved alumni data is available.")
 
-# --- TAB 4: ADMIN MODERATION PANEL ---
+# TAB 4: ADMIN MODERATION PANEL
 with tab4:
     st.header("🛡️ Departmental Admin Moderation Panel")
-    
     admin_password = st.text_input("Enter Admin Passkey", type="password")
     
     if admin_password == "cusb2026":
         st.success("Admin access granted.")
-        
         pending_df = fetch_alumni(status='Pending')
         st.subheader(f"Pending Approvals ({len(pending_df)})")
         
