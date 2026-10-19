@@ -13,7 +13,6 @@ st.set_page_config(
 # Custom Header & Navigation Bar Styling
 st.markdown("""
 <style>
-    /* Top Bar Styling */
     .top-bar {
         background-color: #0056B3;
         color: white;
@@ -30,17 +29,6 @@ st.markdown("""
         text-decoration: none;
         margin-right: 15px;
     }
-    
-    /* Branding Header Layout */
-    .header-box {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 10px 0;
-        border-bottom: 2px solid #B91C1C;
-        margin-bottom: 15px;
-    }
-    
     .brand-title {
         color: #0F172A;
         font-family: 'Georgia', serif;
@@ -50,17 +38,25 @@ st.markdown("""
     }
     .brand-sub {
         color: #1E3A8A;
-        font-size: 1.4rem;
+        font-size: 1.3rem;
         font-weight: 700;
     }
     .brand-tagline {
         color: #475569;
-        font-size: 0.8rem;
+        font-size: 0.75rem;
         font-weight: 600;
+    }
+    .badge-box {
+        background-color: #FEF3C7;
+        border: 1px solid #F59E0B;
+        padding: 8px 12px;
+        border-radius: 8px;
+        text-align: center;
+        font-weight: bold;
+        color: #92400E;
     }
 </style>
 
-<!-- Top Links Bar -->
 <div class="top-bar">
     <a href="#">[ RTI ]</a> | 
     <a href="#">[ Public Self Disclosure ]</a> | 
@@ -69,32 +65,31 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # --- BRANDING HEADER WITH LOGOS ---
-col_main_logo, col_badges = st.columns([2.5, 1.5])
+col_main_logo, col_badges = st.columns([3, 1])
 
 with col_main_logo:
     c_logo, c_text = st.columns([1, 4])
     with c_logo:
-        st.image("https://upload.wikimedia.org/wikipedia/en/2/22/Central_University_of_South_Bihar_logo.png", width=105)
+        st.image("https://cdn-icons-png.flaticon.com/512/3135/3135755.png", width=90)
     with c_text:
         st.markdown('<div class="brand-title">दक्षिण बिहार केन्द्रीय विश्वविद्यालय</div>', unsafe_allow_html=True)
         st.markdown('<div class="brand-sub">Central University of South Bihar</div>', unsafe_allow_html=True)
         st.markdown('<div class="brand-tagline">(Established under the Central Universities Act, 2009) UGC Category I University</div>', unsafe_allow_html=True)
 
 with col_badges:
-    b1, b2 = st.columns(2)
-    with b1:
-        # NAAC A++ Badge Graphic
-        st.image("https://upload.wikimedia.org/wikipedia/commons/f/fa/NAAC_A%2B%2B_Grade.png", width=75)
-    with b2:
-        st.markdown("**5th Convocation**")
-        st.caption("NAAC Accredited A++")
+    st.markdown("""
+        <div class="badge-box">
+            🌟 NAAC Accredited A++<br>
+            <span style="font-size: 0.8rem; font-weight: normal;">5th Convocation Portal</span>
+        </div>
+    """, unsafe_allow_html=True)
 
-st.markdown("<hr style='border-top: 2px solid #B91C1C; margin-top: 5px; margin-bottom: 15px;'>", unsafe_allow_html=True)
+st.markdown("<hr style='border-top: 2px solid #B91C1C; margin-top: 10px; margin-bottom: 15px;'>", unsafe_allow_html=True)
 
-# --- CONVOCATION BANNER IMAGE ---
+# --- CAMPUS BANNER IMAGE ---
 st.image(
-    "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Central_University_of_South_Bihar_Gaya_campus.jpg/1200px-Central_University_of_South_Bihar_Gaya_campus.jpg", 
-    caption="5th Convocation Ceremony | Central University of South Bihar, Gaya", 
+    "https://images.unsplash.com/photo-1541829070764-84a7d30dd3f3?auto=format&fit=crop&w=1200&q=80", 
+    caption="Central University of South Bihar | Panchanpur, Gaya", 
     use_container_width=True
 )
 
@@ -276,12 +271,17 @@ with tab3:
 # TAB 4: ADMIN MODERATION PANEL
 with tab4:
     st.header("🛡️ Departmental Admin Moderation Panel")
-        admin_password = st.text_input("Enter Admin Passkey", type="password")
+    admin_password = st.text_input("Enter Admin Passkey", type="password")
     
-    # Read password safely from Streamlit secrets
-    if admin_password == st.secrets["ADMIN_PASSWORD"]:
+    try:
+        correct_password = st.secrets["ADMIN_PASSWORD"]
+        is_authenticated = (admin_password == correct_password)
+    except Exception:
+        is_authenticated = False
+        st.warning("⚠️ Admin password secret is not configured in Streamlit Cloud settings.")
+        
+    if is_authenticated:
         st.success("Admin access granted.")
-
         pending_df = fetch_alumni(status='Pending')
         st.subheader(f"Pending Approvals ({len(pending_df)})")
         
@@ -305,3 +305,4 @@ with tab4:
         st.error("Incorrect passkey. Please check and try again.")
     else:
         st.info("Enter the passkey to manage pending profiles.")
+        
